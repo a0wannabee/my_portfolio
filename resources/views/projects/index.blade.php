@@ -7,10 +7,6 @@
 
     <a href="{{ route('projects.create') }}" class="btn btn-primary" style="margin-bottom: 20px;">Tambah Project Baru</a>
 
-    @if (session('success'))
-        <div class="alert-success">{{ session('success') }}</div>
-    @endif
-
     <table>
         <thead>
             <tr>

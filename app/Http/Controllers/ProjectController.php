@@ -20,17 +20,26 @@ class ProjectController extends Controller
 
     public function store(Request $request)
 {
-    $request->validate([
-        'title' => 'required|max:200',
-        'description' => 'required',
+    $validatedData = $request->validate([
+        'title' => 'required|string|min:5',
+        'description' => 'required|string|min:10',
     ]);
 
-    $project = new Project();
-    $project->title = $request->title;
-    $project->description = $request->description;
-    $project->save();
+    Project::create($validatedData);
 
-    return redirect()->route('projects.index')->with('success', 'Project berhasil ditambahkan.');
+    return redirect()->route('projects.index')->with('success', 'Data proyek berhasil ditambahkan.');
+}
+
+public function update(Request $request, Project $project)
+{
+    $validatedData = $request->validate([
+        'title' => 'required|string|min:5',
+        'description' => 'required|string|min:10',
+    ]);
+
+    $project->update($validatedData);
+
+    return redirect()->route('projects.index')->with('success', 'Project Berhasil Diperbarui!');
 }
 
     // Menampilkan Halaman Detail Project
@@ -43,19 +52,6 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         return view('projects.edit', compact('project'));
-    }
-
-    // Menyimpan Perubahan Edit Project
-    public function update(Request $request, Project $project)
-    {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-        ]);
-
-        $project->update($validatedData);
-
-        return redirect()->route('projects.index')->with('success', 'Project berhasil diperbarui.');
     }
 
     // Menghapus Project
