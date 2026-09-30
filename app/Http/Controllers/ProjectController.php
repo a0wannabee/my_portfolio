@@ -3,62 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Project;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $projects = Project::all();
+        return view('projects.index', compact('projects'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('projects.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required|max:200',
+        'description' => 'required',
+    ]);
+
+    $project = new Project();
+    $project->title = $request->title;
+    $project->description = $request->description;
+    $project->save();
+
+    return redirect()->route('projects.index')->with('success', 'Project berhasil ditambahkan.');
+}
+
+    // Menampilkan Halaman Detail Project
+    public function show(Project $project)
     {
-        //
+        return view('projects.show', compact('project'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Menampilkan Halaman Form Edit Project
+    public function edit(Project $project)
     {
-        //
+        return view('projects.edit', compact('project'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Menyimpan Perubahan Edit Project
+    public function update(Request $request, Project $project)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        $project->update($validatedData);
+
+        return redirect()->route('projects.index')->with('success', 'Project berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Menghapus Project
+    public function destroy(Project $project)
     {
-        //
-    }
+        $project->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('projects.index')->with('success', 'Project berhasil dihapus.');
     }
 }

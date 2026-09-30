@@ -1,6 +1,7 @@
- <?php
+<?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/', function () {
     return view('home');
@@ -14,6 +15,5 @@ Route::get('/education', function () {
     return view('education');
 })->name('education');
 
-Route::get('/projects', function () {
-    return view('projects');
-})->name('projects');
+// Mengubah rute projects agar terhubung ke ProjectController (Mendukung Index, Create, Store, Show, Edit, Update, Destroy)
+Route::resource('projects', ProjectController::class);

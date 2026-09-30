@@ -5,7 +5,7 @@
 @section('content')
     <h1>Daftar Project</h1>
 
-    <a href="{{ route('projects') }}" class="btn btn-primary" style="margin-bottom: 20px;">Tambah Project Baru</a>
+    <a href="{{ route('projects.create') }}" class="btn btn-primary" style="margin-bottom: 20px;">Tambah Project Baru</a>
 
     <table>
         <thead>
