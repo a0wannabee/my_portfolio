@@ -28,6 +28,14 @@
                 <textarea name="description" id="description" required>{{ old('description') }}</textarea>
             </div>
 
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select name="status" id="status" required style="width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="draft" @selected(old('status', 'draft') === 'draft')>Draft</option>
+                    <option value="published" @selected(old('status') === 'published')>Published</option>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary">Simpan Data</button>
         </form>
     </div>

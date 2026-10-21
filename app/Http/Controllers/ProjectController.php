@@ -7,10 +7,37 @@ use App\Models\Project;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::all();
-        return view('projects.index', compact('projects'));
+        $query = Project::query();
+
+        // Local scope search()
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        // Local scope published() / draft()
+        if ($request->status === 'published') {
+            $query->published();
+        } elseif ($request->status === 'draft') {
+            $query->draft();
+        }
+
+        $projects = $query->latest()->paginate(10)->withQueryString();
+
+        // Retrieving aggregates
+        $totalProjects = Project::count();
+        $publishedProjects = Project::published()->count();
+        $trashedProjects = Project::onlyTrashed()->count();
+        $latestProject = Project::latest()->first();
+
+        return view('projects.index', compact(
+            'projects',
+            'totalProjects',
+            'publishedProjects',
+            'trashedProjects',
+            'latestProject'
+        ));
     }
 
     public function create()
@@ -19,28 +46,31 @@ class ProjectController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validatedData = $request->validate([
-        'title' => 'required|string|min:5',
-        'description' => 'required|string|min:10',
-    ]);
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|string|min:5|max:200',
+            'description' => 'required|string|min:10',
+            'status' => 'required|in:draft,published',
+        ]);
 
-    Project::create($validatedData);
+        // Aman, hanya field yang sudah divalidasi
+        Project::create($validatedData);
 
-    return redirect()->route('projects.index')->with('success', 'Data proyek berhasil ditambahkan.');
-}
+        return redirect()->route('projects.index')->with('success', 'Data proyek berhasil ditambahkan.');
+    }
 
-public function update(Request $request, Project $project)
-{
-    $validatedData = $request->validate([
-        'title' => 'required|string|min:5',
-        'description' => 'required|string|min:10',
-    ]);
+    public function update(Request $request, Project $project)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|string|min:5|max:200',
+            'description' => 'required|string|min:10',
+            'status' => 'required|in:draft,published',
+        ]);
 
-    $project->update($validatedData);
+        $project->update($validatedData);
 
-    return redirect()->route('projects.index')->with('success', 'Project Berhasil Diperbarui!');
-}
+        return redirect()->route('projects.index')->with('success', 'Project Berhasil Diperbarui!');
+    }
 
     // Menampilkan Halaman Detail Project
     public function show(Project $project)
@@ -54,11 +84,37 @@ public function update(Request $request, Project $project)
         return view('projects.edit', compact('project'));
     }
 
-    // Menghapus Project
+    // Menghapus Project (soft delete, pindah ke trash)
     public function destroy(Project $project)
     {
         $project->delete();
 
-        return redirect()->route('projects.index')->with('success', 'Project berhasil dihapus.');
+        return redirect()->route('projects.index')->with('success', 'Project dipindahkan ke trash.');
+    }
+
+    // Menampilkan Project yang sudah di-soft delete
+    public function trash()
+    {
+        $projects = Project::onlyTrashed()->latest('deleted_at')->paginate(10);
+
+        return view('projects.trash', compact('projects'));
+    }
+
+    // Mengembalikan Project dari trash
+    public function restore($id)
+    {
+        $project = Project::onlyTrashed()->findOrFail($id);
+        $project->restore();
+
+        return redirect()->route('projects.trash')->with('success', 'Project berhasil dipulihkan.');
+    }
+
+    // Menghapus Project secara permanen
+    public function forceDelete($id)
+    {
+        $project = Project::onlyTrashed()->findOrFail($id);
+        $project->forceDelete();
+
+        return redirect()->route('projects.trash')->with('success', 'Project berhasil dihapus permanen.');
     }
 }
