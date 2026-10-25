@@ -17,9 +17,26 @@ class ProjectFactory extends Factory
      */
     public function definition(): array
     {
+        $jenis = ['Website', 'Aplikasi', 'Sistem Informasi', 'Dashboard'];
+        $tema = [
+            'Toko Online', 'Perpustakaan', 'Booking Lapangan', 'Manajemen Tugas',
+            'Katalog Produk', 'Pencatatan Keuangan', 'Absensi Siswa', 'Reservasi Kafe',
+            'Jadwal Kuliah', 'Profil Desa', 'Blog Pribadi', 'Rental Kamera',
+        ];
+
+        $judul = fake()->randomElement($jenis) . ' ' . fake()->randomElement($tema);
+
         return [
-            'title' => ucfirst(fake()->words(4, true)),
-            'description' => fake()->paragraph(3),
+            'title' => $judul,
+            'description' => 'Dibangun dengan '
+                . fake()->randomElement(['Laravel', 'PHP Native', 'Bootstrap', 'MySQL'])
+                . ' untuk '
+                . fake()->randomElement([
+                    'memudahkan pengelolaan data',
+                    'mempercepat pencarian informasi',
+                    'menyajikan laporan secara ringkas',
+                    'mendukung kebutuhan pengguna sehari-hari',
+                ]) . '.',
             'status' => fake()->randomElement(['draft', 'published']),
         ];
     }
