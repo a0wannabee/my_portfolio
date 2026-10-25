@@ -15,11 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Cek dulu agar tidak error duplicate email saat db:seed dijalankan dua kali
+        if (! User::where('email', 'test@example.com')->exists()) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // RandomProjectSeeder (25 data acak via factory) bisa dijalankan terpisah:
+        // php artisan db:seed --class=RandomProjectSeeder
+        $this->call([
+            ProjectTableSeeder::class,
         ]);
     }
 }

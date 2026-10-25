@@ -48,23 +48,16 @@
         </tbody>
     </table>
 
-    @if($projects->hasPages())
-        <div style="display: flex; gap: 10px; align-items: center;">
-            @if($projects->onFirstPage())
-                <span class="btn" style="background-color: #e0e0e0; color: #888;">&laquo; Sebelumnya</span>
-            @else
-                <a href="{{ $projects->previousPageUrl() }}" class="btn btn-primary">&laquo; Sebelumnya</a>
-            @endif
+    <!-- Informasi halaman + tautan halaman -->
+    <div class="pagination-wrapper">
+        <p class="pagination-info">
+            Halaman : {{ $projects->currentPage() }}
+            &middot; Jumlah Data : {{ $projects->total() }}
+            &middot; Data Per Halaman : {{ $projects->perPage() }}
+        </p>
 
-            <span>Halaman {{ $projects->currentPage() }} dari {{ $projects->lastPage() }}</span>
-
-            @if($projects->hasMorePages())
-                <a href="{{ $projects->nextPageUrl() }}" class="btn btn-primary">Berikutnya &raquo;</a>
-            @else
-                <span class="btn" style="background-color: #e0e0e0; color: #888;">Berikutnya &raquo;</span>
-            @endif
-        </div>
-    @endif
+        {{ $projects->links('vendor.pagination.portfolio') }}
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

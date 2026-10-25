@@ -17,19 +17,24 @@
 
     <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
         <a href="{{ route('projects.create') }}" class="btn btn-primary">Tambah Project Baru</a>
-        <a href="{{ route('projects.trash') }}" class="btn" style="background-color: #6c757d; color: white;">Trash ({{ $trashedProjects }})</a>
+        <a href="{{ route('projects.trash') }}" class="btn" style="background-color: #6c757d; color: white;">Trash</a>
     </div>
 
     <!-- Pencarian & filter status (Local Scope) -->
     <form action="{{ route('projects.index') }}" method="GET" style="display: flex; gap: 10px; flex-wrap: wrap;">
         <input type="text" name="search" placeholder="Cari judul project..." value="{{ request('search') }}" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;">
-        <select name="status" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;">
+        <select name="status" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;">
             <option value="">Semua Status</option>
             <option value="published" @selected(request('status') === 'published')>Published</option>
             <option value="draft" @selected(request('status') === 'draft')>Draft</option>
         </select>
+        <select name="per_page" onchange="this.form.submit()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;">
+            @foreach([5, 10, 25] as $jumlah)
+                <option value="{{ $jumlah }}" @selected($perPage === $jumlah)>{{ $jumlah }} per halaman</option>
+            @endforeach
+        </select>
         <button type="submit" class="btn btn-primary">Cari</button>
-        @if(request()->hasAny(['search', 'status']))
+        @if(request()->hasAny(['search', 'status', 'per_page']))
             <a href="{{ route('projects.index') }}" class="btn" style="background-color: #6c757d; color: white;">Reset</a>
         @endif
     </form>
@@ -66,21 +71,14 @@
         </tbody>
     </table>
 
-    @if($projects->hasPages())
-        <div style="display: flex; gap: 10px; align-items: center;">
-            @if($projects->onFirstPage())
-                <span class="btn" style="background-color: #e0e0e0; color: #888;">&laquo; Sebelumnya</span>
-            @else
-                <a href="{{ $projects->previousPageUrl() }}" class="btn btn-primary">&laquo; Sebelumnya</a>
-            @endif
+    <!-- Informasi halaman + tautan halaman -->
+    <div class="pagination-wrapper">
+        <p class="pagination-info">
+            Halaman : {{ $projects->currentPage() }}
+            &middot; Jumlah Data : {{ $projects->total() }}
+            &middot; Data Per Halaman : {{ $projects->perPage() }}
+        </p>
 
-            <span>Halaman {{ $projects->currentPage() }} dari {{ $projects->lastPage() }}</span>
-
-            @if($projects->hasMorePages())
-                <a href="{{ $projects->nextPageUrl() }}" class="btn btn-primary">Berikutnya &raquo;</a>
-            @else
-                <span class="btn" style="background-color: #e0e0e0; color: #888;">Berikutnya &raquo;</span>
-            @endif
-        </div>
-    @endif
+        {{ $projects->links('vendor.pagination.portfolio') }}
+    </div>
 @endsection

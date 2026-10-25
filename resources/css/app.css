@@ -213,3 +213,56 @@ table tr:hover {
     list-style: disc;
     margin-left: 20px;
 }
+/* Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #555;
+}
+
+main .pagination-info {
+    margin-bottom: 0;
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.page-link {
+    min-width: 36px;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #3490dc;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+a.page-link:hover {
+    background-color: #eef5fc;
+}
+
+.page-link.active {
+    background-color: #3490dc;
+    border-color: #3490dc;
+    color: white;
+    font-weight: bold;
+}
+
+.page-link.disabled {
+    color: #aaa;
+    background-color: #f5f5f5;
+}

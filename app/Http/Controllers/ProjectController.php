@@ -23,20 +23,29 @@ class ProjectController extends Controller
             $query->draft();
         }
 
-        $projects = $query->latest()->paginate(10)->withQueryString();
+        // Jumlah data per halaman: hanya boleh 5, 10, atau 25
+        $perPage = (int) $request->input('per_page', 10);
+        if (! in_array($perPage, [5, 10, 25], true)) {
+            $perPage = 10;
+        }
+
+        // orderByDesc('id') sebagai pengurut kedua, karena data seeder punya created_at yang sama
+        // withQueryString() agar search, status, dan per_page ikut saat pindah halaman
+        $projects = $query->latest()->orderByDesc('id')->paginate($perPage)->withQueryString();
 
         // Retrieving aggregates
         $totalProjects = Project::count();
         $publishedProjects = Project::published()->count();
         $trashedProjects = Project::onlyTrashed()->count();
-        $latestProject = Project::latest()->first();
+        $latestProject = Project::latest()->orderByDesc('id')->first();
 
         return view('projects.index', compact(
             'projects',
             'totalProjects',
             'publishedProjects',
             'trashedProjects',
-            'latestProject'
+            'latestProject',
+            'perPage'
         ));
     }
 
