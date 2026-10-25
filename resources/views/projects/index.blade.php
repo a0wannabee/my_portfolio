@@ -1,4 +1,4 @@
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('title', 'Daftar Project - Portfolio')
 
@@ -50,11 +50,12 @@
                 <tr>
                     <td>{{ $projects->firstItem() + $index }}</td>
                     <td>{{ $project->title }}</td>
-                    <td>{{ $project->description }}</td>
+                    <td>{{ Str::limit($project->description, 50) }}</td>
                     <td>{{ ucfirst($project->status) }}</td>
-                    <td>{{ $project->created_at }}</td>
+                    <td>{{ $project->created_at?->format('d M Y') }}</td>
                     <td>
                         <a href="{{ route('projects.show', $project->id) }}" class="btn btn-detail">Detail</a>
+                        <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-detail">Edit</a>
                     </td>
                 </tr>
             @empty

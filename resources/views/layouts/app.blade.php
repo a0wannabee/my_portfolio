@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    @include('partials.navbar')
+    @include('layouts.navbar')
 
     <main>
         @if(session('success'))
@@ -20,7 +20,7 @@
         @yield('content')
     </main>
 
-    @include('partials.footer')
+    @include('layouts.footer')
 
 </body>
 </html>
