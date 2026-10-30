@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,16 @@ class DatabaseSeeder extends Seeder
                 'email' => 'test@example.com',
             ]);
         }
+
+        // Akun admin untuk login (password wajib di-hash)
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'role' => 'admin',
+                'password' => Hash::make('password123'),
+            ]
+        );
 
         // RandomProjectSeeder (25 data acak via factory) bisa dijalankan terpisah:
         // php artisan db:seed --class=RandomProjectSeeder
